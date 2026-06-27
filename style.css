@@ -16,7 +16,7 @@
   --accent-bright: #4a8fd6;
   --red: #b23b3b;
   --red-hover: #c94a4a;
-  --red-border: #722;
+  --red-border: #6e2222;
 }
 * { box-sizing: border-box; }
 html, body {
@@ -90,12 +90,13 @@ body {
   right: 8px;
   z-index: 10;
   font-family: inherit;
-  font-size: 11px;
-  color: #f1d6d6;
+  font-size: 12px;
+  line-height: 1;
+  color: #f6e3e3;
   background: var(--red);
   border: 1px solid var(--red-border);
   border-radius: 3px;
-  padding: 2px 7px;
+  padding: 5px 13px;
   cursor: pointer;
 }
 .reset:hover { background: var(--red-hover); }
@@ -131,14 +132,35 @@ body {
 .row.selected { background: rgba(61, 124, 196, 0.35); }
 
 .dim { color: var(--text-dim); }
-.pf-row {
-  display: flex;
-  gap: 8px;
-  line-height: 22px;
+
+.card {
+  width: 232px;
+  background: var(--frame);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
 }
-.pf-key { color: var(--text-dim); width: 44px; }
-.pf-val { color: var(--text); }
-.pf-id { color: var(--accent-bright); letter-spacing: 1px; }
+.card-name {
+  background: var(--accent);
+  color: #ffffff;
+  padding: 5px 8px;
+  font-size: 14px;
+}
+.card-flags {
+  padding: 7px 8px;
+  font-size: 20px;
+  line-height: 1;
+  border-bottom: 1px solid var(--border);
+}
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 8px;
+  line-height: 19px;
+}
+.card-key { color: var(--text-dim); }
+.card-val { color: var(--text); }
+.card-id { color: var(--accent-bright); letter-spacing: 1px; }
 
 .pane-body::-webkit-scrollbar { width: 14px; }
 .pane-body::-webkit-scrollbar-track { background: var(--frame); }
