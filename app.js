@@ -137,19 +137,47 @@ const mbtiTypes = ["ISFJ","ESFJ","ISTJ","ISFP","ESTJ","ESFP","ENFP","ISTP",
 const mbtiWeights = [13.8,12.3,11.6,8.8,8.7,8.5,8.1,5.4,4.4,4.3,3.3,3.2,2.5,2.1,1.8,1.5];
 
 const conditions = [
-  {name:"Anxiety disorder",p:0.12},{name:"Depression",p:0.08},{name:"Dyslexia",p:0.07},
-  {name:"Misophonia",p:0.06},{name:"ADHD",p:0.05},{name:"Dyscalculia",p:0.04},
-  {name:"PTSD",p:0.035},{name:"Aphantasia",p:0.03},{name:"Synesthesia",p:0.03},
-  {name:"Autism spectrum",p:0.025},{name:"Prosopagnosia",p:0.02},{name:"Bipolar disorder",p:0.015},
-  {name:"Eating disorder",p:0.015},{name:"Trichotillomania",p:0.015},{name:"OCD",p:0.012},
-  {name:"Tourette syndrome",p:0.006},{name:"Schizophrenia",p:0.005},{name:"Narcolepsy",p:0.0005},
-  {name:"Huntington's disease",p:0.00007},{name:"Capgras delusion",p:0.00002},
-  {name:"Stendhal syndrome",p:0.00001},{name:"Cotard's delusion",p:0.00001},
-  {name:"Alien hand syndrome",p:0.000005},{name:"Foreign accent syndrome",p:0.000002},
-  {name:"Hyperthymesia",p:0.0000005},{name:"Fatal familial insomnia",p:0.0000005}
+  {name:"Anxiety disorder",p:0.12,spectrum:true},
+  {name:"Depression",p:0.08,spectrum:true},
+  {name:"Dyslexia",p:0.07},
+  {name:"Misophonia",p:0.06},
+  {name:"ADHD",p:0.05,spectrum:true},
+  {name:"Dyscalculia",p:0.04},
+  {name:"PTSD",p:0.035,spectrum:true},
+  {name:"Obsessive-compulsive PD",p:0.03},
+  {name:"Aphantasia",p:0.03},
+  {name:"Synesthesia",p:0.03},
+  {name:"Autism spectrum",p:0.025,spectrum:true},
+  {name:"Avoidant PD",p:0.022},
+  {name:"Prosopagnosia",p:0.02},
+  {name:"Paranoid PD",p:0.018},
+  {name:"Bipolar disorder",p:0.015,spectrum:true},
+  {name:"Eating disorder",p:0.015},
+  {name:"Antisocial PD",p:0.015,spectrum:true},
+  {name:"Trichotillomania",p:0.014},
+  {name:"Borderline PD",p:0.014,spectrum:true},
+  {name:"OCD",p:0.012,spectrum:true},
+  {name:"Narcissistic PD",p:0.01,spectrum:true},
+  {name:"Psychopathy",p:0.01,spectrum:true},
+  {name:"Histrionic PD",p:0.009},
+  {name:"Schizoid PD",p:0.009},
+  {name:"Schizotypal PD",p:0.008},
+  {name:"Tourette syndrome",p:0.006},
+  {name:"Schizophrenia",p:0.005,spectrum:true},
+  {name:"Narcolepsy",p:0.0005},
+  {name:"Huntington's disease",p:0.00007},
+  {name:"Capgras delusion",p:0.00002},
+  {name:"Stendhal syndrome",p:0.00001},
+  {name:"Cotard's delusion",p:0.00001},
+  {name:"Alien hand syndrome",p:0.000005},
+  {name:"Foreign accent syndrome",p:0.000002},
+  {name:"Hyperthymesia",p:0.0000005},
+  {name:"Fatal familial insomnia",p:0.0000005}
 ];
+const condInfo = {};
+for (const c of conditions) condInfo[c.name] = c;
 
-const KEY = "zmmtms_v4";
+const KEY = "zmmtms_v5";
 const MAX = 1000;
 const GRAB_W = 10;
 const TWEMOJI_OPTS = {
@@ -218,10 +246,21 @@ function makeName(primaryFlag, sex) {
   const first = sex === "Male" ? randPick(set.m) : randPick(set.f);
   return first + " " + randPick(set.last);
 }
+function rollSeverity() {
+  const band = weightedChoice([[20, 39], [40, 69], [70, 98]], [55, 32, 13]);
+  return randInt(band[0], band[1]);
+}
+function sevInfo(pct) {
+  if (pct < 40) return { label: "Mild", cls: "sev-mild" };
+  if (pct < 70) return { label: "Moderate", cls: "sev-mod" };
+  return { label: "Severe", cls: "sev-sev" };
+}
 function rollConditions() {
   const out = [];
   for (const c of conditions) {
-    if (Math.random() < c.p) out.push(c.name);
+    if (Math.random() < c.p) {
+      out.push({ name: c.name, sev: c.spectrum ? rollSeverity() : null });
+    }
   }
   return out;
 }
@@ -283,14 +322,26 @@ function renderList() {
   const term = searchTerm.toLowerCase();
   let shown = 0;
   list.innerHTML = "";
-  people.forEach((p, idx) => {
+  people.forEach((p) => {
     if (term && !p.name.toLowerCase().includes(term)) return;
     shown++;
     const row = document.createElement("div");
-    row.className = "row" + (idx === selected ? " selected" : "");
-    row.dataset.idx = idx;
-    row.textContent = p.name;
-    row.addEventListener("click", () => setSelected(idx));
+    row.className = "row" + (p.id === selected ? " selected" : "");
+    row.dataset.id = p.id;
+
+    const name = document.createElement("span");
+    name.className = "row-name";
+    name.textContent = p.name;
+
+    const kill = document.createElement("button");
+    kill.className = "kill";
+    kill.textContent = "✕";
+    kill.title = "Kill";
+    kill.addEventListener("click", (e) => { e.stopPropagation(); killPerson(p.id); });
+
+    row.appendChild(name);
+    row.appendChild(kill);
+    row.addEventListener("click", () => setSelected(p.id));
     list.appendChild(row);
   });
   listHead.textContent = term
@@ -298,37 +349,60 @@ function renderList() {
     : "People (" + people.length + ")";
 }
 
-function setSelected(idx) {
-  selected = (selected === idx) ? null : idx;
+function setSelected(id) {
+  selected = (selected === id) ? null : id;
   [...list.children].forEach((c) => {
-    c.classList.toggle("selected", Number(c.dataset.idx) === selected);
+    c.classList.toggle("selected", c.dataset.id === selected);
   });
   save();
   renderProfile();
 }
 
+function killPerson(id) {
+  people = people.filter((p) => p.id !== id);
+  if (selected === id) selected = null;
+  save();
+  renderStats();
+  renderList();
+  renderProfile();
+}
+
 function renderProfile() {
-  if (selected === null || !people[selected]) {
+  const p = people.find((x) => x.id === selected);
+  if (!p) {
     profile.innerHTML = '<div class="placeholder-box">Click a profile to open it</div>';
     return;
   }
-  const p = people[selected];
   const condHtml = p.conditions.length
-    ? p.conditions.map((c) => '<div class="cond">' + c + '</div>').join("")
+    ? p.conditions.map((c) => {
+        if (c.sev == null) {
+          return '<div class="cond"><div class="cond-name">' + c.name + '</div></div>';
+        }
+        const info = sevInfo(c.sev);
+        return '<div class="cond">' +
+          '<div class="cond-name">' + c.name + '</div>' +
+          '<div class="cond-bar"><div class="cond-fill ' + info.cls + '" style="width:' + c.sev + '%"></div></div>' +
+          '<div class="cond-meta">' + info.label + ' &middot; ' + c.sev + '%</div>' +
+        '</div>';
+      }).join("")
     : '<div class="cond dim">None</div>';
+
   profile.innerHTML =
     '<div class="card">' +
-      '<div class="card-name">' + p.name + '</div>' +
-      '<div class="card-flags">' + p.flags.join(" ") + '</div>' +
-      '<div class="card-row"><span class="card-key">Sex</span><span class="card-val">' + p.sex + '</span></div>' +
-      '<div class="card-row"><span class="card-key">Age</span><span class="card-val">' + p.age + '</span></div>' +
-      '<div class="card-row"><span class="card-key">Type</span><span class="card-val">' + p.mbti + '</span></div>' +
-      '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">' + p.id + '</span></div>' +
-      '<div class="card-section">' +
-        '<div class="card-sec-title">Conditions</div>' +
-        condHtml +
+      '<div class="card-name">' +
+        '<span class="card-name-text">' + p.name + '</span>' +
+        '<span class="card-name-flags">' + p.flags.join(" ") + '</span>' +
       '</div>' +
+      '<div class="card-fixed">' +
+        '<div class="card-row"><span class="card-key">Sex</span><span class="card-val">' + p.sex + '</span></div>' +
+        '<div class="card-row"><span class="card-key">Age</span><span class="card-val">' + p.age + '</span></div>' +
+        '<div class="card-row"><span class="card-key">Type</span><span class="card-val">' + p.mbti + '</span></div>' +
+        '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">' + p.id + '</span></div>' +
+      '</div>' +
+      '<div class="card-cond-head">Conditions</div>' +
+      '<div class="card-cond-body">' + condHtml + '</div>' +
     '</div>';
+
   const nameEl = profile.querySelector(".card-name");
   if (nameEl) nameEl.addEventListener("click", () => setSelected(selected));
   parseEmoji(profile);
@@ -341,19 +415,23 @@ function statRow(k, v) {
 function renderStats() {
   const n = people.length;
   if (!n) { stats.innerHTML = ""; return; }
-  let male = 0, ageSum = 0, withCond = 0;
-  const flagCount = {}, condCount = {};
+  let male = 0, ageSum = 0, withCond = 0, totalConds = 0;
+  const flagCount = {}, condCount = {}, condSevSum = {};
   for (const p of people) {
     if (p.sex === "Male") male++;
     ageSum += p.age;
     if (p.conditions.length) withCond++;
     for (const f of p.flags) flagCount[f] = (flagCount[f] || 0) + 1;
-    for (const c of p.conditions) condCount[c] = (condCount[c] || 0) + 1;
+    for (const c of p.conditions) {
+      condCount[c.name] = (condCount[c.name] || 0) + 1;
+      totalConds++;
+      if (c.sev != null) condSevSum[c.name] = (condSevSum[c.name] || 0) + c.sev;
+    }
   }
   const pct = (x) => Math.round((x / n) * 100);
   const flagTotal = Object.values(flagCount).reduce((a, b) => a + b, 0);
   const topFlags = Object.entries(flagCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const topConds = Object.entries(condCount).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  const condList = Object.entries(condCount).sort((a, b) => b[1] - a[1]);
 
   let html = "";
   html += statRow("Population", n);
@@ -369,8 +447,13 @@ function renderStats() {
 
   html += '<div class="stat-sub">Conditions</div>';
   html += statRow("With a condition", pct(withCond) + "%");
-  for (const [c, cnt] of topConds) {
-    html += '<div class="stat-row"><span class="stat-key">' + c + '</span><span class="stat-val">' + pct(cnt) + "%</span></div>";
+  html += statRow("Avg per person", (totalConds / n).toFixed(2));
+  for (const [name, cnt] of condList) {
+    html += '<div class="stat-row"><span class="stat-key">' + name +
+      '</span><span class="stat-val">' + pct(cnt) + '% <span class="stat-dim">(' + cnt + ')</span></span></div>';
+    if (condInfo[name] && condInfo[name].spectrum) {
+      html += '<div class="stat-note">avg severity ' + Math.round(condSevSum[name] / cnt) + '%</div>';
+    }
   }
 
   stats.innerHTML = html;
@@ -384,10 +467,10 @@ function generate() {
     const sex = Math.random() < 0.5 ? "Male" : "Female";
     const flagList = pickFlags();
     people.push({
+      id: makeId(used),
       name: makeName(flagList[0], sex),
       sex: sex,
       age: randInt(1, 80),
-      id: makeId(used),
       mbti: weightedChoice(mbtiTypes, mbtiWeights),
       flags: flagList,
       conditions: rollConditions()
