@@ -110,6 +110,17 @@ const flagWeights = [1410,1430,335,277,240,223,216,173,144,128,
   68,68,60,59,55,52,52,48,46,37,
   45,48,47,45,42,38,39,37,37,26];
 
+const flagNames = {
+  "🇨🇳":"China","🇮🇳":"India","🇺🇸":"USA","🇮🇩":"Indonesia","🇵🇰":"Pakistan",
+  "🇳🇬":"Nigeria","🇧🇷":"Brazil","🇧🇩":"Bangladesh","🇷🇺":"Russia","🇲🇽":"Mexico",
+  "🇯🇵":"Japan","🇪🇹":"Ethiopia","🇵🇭":"Philippines","🇪🇬":"Egypt","🇻🇳":"Vietnam",
+  "🇨🇩":"DR Congo","🇮🇷":"Iran","🇹🇷":"Turkey","🇩🇪":"Germany","🇹🇭":"Thailand",
+  "🇬🇧":"UK","🇫🇷":"France","🇿🇦":"South Africa","🇮🇹":"Italy","🇰🇪":"Kenya",
+  "🇰🇷":"South Korea","🇨🇴":"Colombia","🇪🇸":"Spain","🇦🇷":"Argentina","🇺🇦":"Ukraine",
+  "🇩🇿":"Algeria","🇸🇩":"Sudan","🇺🇬":"Uganda","🇮🇶":"Iraq","🇦🇫":"Afghanistan",
+  "🇵🇱":"Poland","🇨🇦":"Canada","🇲🇦":"Morocco","🇸🇦":"Saudi Arabia","🇦🇺":"Australia"
+};
+
 const flagToSet = {
   "🇨🇳":"chinese","🇮🇳":"indian","🇺🇸":"western","🇮🇩":"indonesian","🇵🇰":"arabic",
   "🇳🇬":"nigerian","🇧🇷":"brazilian","🇧🇩":"arabic","🇷🇺":"russian","🇲🇽":"hispanic",
@@ -125,7 +136,21 @@ const mbtiTypes = ["ISFJ","ESFJ","ISTJ","ISFP","ESTJ","ESFP","ENFP","ISTP",
   "INFP","ESTP","INTP","ENTP","ENFJ","INTJ","ENTJ","INFJ"];
 const mbtiWeights = [13.8,12.3,11.6,8.8,8.7,8.5,8.1,5.4,4.4,4.3,3.3,3.2,2.5,2.1,1.8,1.5];
 
-const KEY = "zmmtms_v3";
+const conditions = [
+  {name:"Anxiety disorder",p:0.12},{name:"Depression",p:0.08},{name:"Dyslexia",p:0.07},
+  {name:"Misophonia",p:0.06},{name:"ADHD",p:0.05},{name:"Dyscalculia",p:0.04},
+  {name:"PTSD",p:0.035},{name:"Aphantasia",p:0.03},{name:"Synesthesia",p:0.03},
+  {name:"Autism spectrum",p:0.025},{name:"Prosopagnosia",p:0.02},{name:"Bipolar disorder",p:0.015},
+  {name:"Eating disorder",p:0.015},{name:"Trichotillomania",p:0.015},{name:"OCD",p:0.012},
+  {name:"Tourette syndrome",p:0.006},{name:"Schizophrenia",p:0.005},{name:"Narcolepsy",p:0.0005},
+  {name:"Huntington's disease",p:0.00007},{name:"Capgras delusion",p:0.00002},
+  {name:"Stendhal syndrome",p:0.00001},{name:"Cotard's delusion",p:0.00001},
+  {name:"Alien hand syndrome",p:0.000005},{name:"Foreign accent syndrome",p:0.000002},
+  {name:"Hyperthymesia",p:0.0000005},{name:"Fatal familial insomnia",p:0.0000005}
+];
+
+const KEY = "zmmtms_v4";
+const MAX = 1000;
 const GRAB_W = 10;
 const TWEMOJI_OPTS = {
   base: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@master/assets/",
@@ -140,13 +165,16 @@ const grab = document.getElementById("grab");
 const val = document.getElementById("val");
 const gen = document.getElementById("gen");
 const reset = document.getElementById("reset");
+const search = document.getElementById("search");
 const list = document.getElementById("list");
 const listHead = document.getElementById("listHead");
 const profile = document.getElementById("profileArea");
+const stats = document.getElementById("stats");
 
 let value = 10;
 let people = [];
 let selected = null;
+let searchTerm = "";
 
 function randPick(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -190,13 +218,20 @@ function makeName(primaryFlag, sex) {
   const first = sex === "Male" ? randPick(set.m) : randPick(set.f);
   return first + " " + randPick(set.last);
 }
+function rollConditions() {
+  const out = [];
+  for (const c of conditions) {
+    if (Math.random() < c.p) out.push(c.name);
+  }
+  return out;
+}
 function parseEmoji(el) {
   if (window.twemoji) twemoji.parse(el, TWEMOJI_OPTS);
 }
 
 function renderSlider() {
   const width = slider.clientWidth;
-  const frac = (value - 1) / 99;
+  const frac = (value - 1) / (MAX - 1);
   grab.style.left = (frac * (width - GRAB_W)) + "px";
   val.textContent = value;
 }
@@ -205,7 +240,7 @@ function updateFromX(clientX) {
   const width = slider.clientWidth;
   let frac = (clientX - r.left - 1 - GRAB_W / 2) / (width - GRAB_W);
   frac = Math.max(0, Math.min(1, frac));
-  value = Math.round(1 + frac * 99);
+  value = Math.round(1 + frac * (MAX - 1));
   renderSlider();
 }
 
@@ -239,33 +274,48 @@ function showStart() {
 function showSim() {
   startView.style.display = "none";
   simView.style.display = "flex";
+  renderStats();
   renderList();
   renderProfile();
 }
 
 function renderList() {
-  listHead.textContent = "People (" + people.length + ")";
+  const term = searchTerm.toLowerCase();
+  let shown = 0;
   list.innerHTML = "";
   people.forEach((p, idx) => {
+    if (term && !p.name.toLowerCase().includes(term)) return;
+    shown++;
     const row = document.createElement("div");
     row.className = "row" + (idx === selected ? " selected" : "");
+    row.dataset.idx = idx;
     row.textContent = p.name;
-    row.addEventListener("click", () => {
-      selected = idx;
-      save();
-      renderList();
-      renderProfile();
-    });
+    row.addEventListener("click", () => setSelected(idx));
     list.appendChild(row);
   });
+  listHead.textContent = term
+    ? "People (" + shown + "/" + people.length + ")"
+    : "People (" + people.length + ")";
+}
+
+function setSelected(idx) {
+  selected = (selected === idx) ? null : idx;
+  [...list.children].forEach((c) => {
+    c.classList.toggle("selected", Number(c.dataset.idx) === selected);
+  });
+  save();
+  renderProfile();
 }
 
 function renderProfile() {
   if (selected === null || !people[selected]) {
-    profile.innerHTML = '<div class="dim">Select a person to view their card.</div>';
+    profile.innerHTML = '<div class="placeholder-box">Click a profile to open it</div>';
     return;
   }
   const p = people[selected];
+  const condHtml = p.conditions.length
+    ? p.conditions.map((c) => '<div class="cond">' + c + '</div>').join("")
+    : '<div class="cond dim">None</div>';
   profile.innerHTML =
     '<div class="card">' +
       '<div class="card-name">' + p.name + '</div>' +
@@ -274,8 +324,57 @@ function renderProfile() {
       '<div class="card-row"><span class="card-key">Age</span><span class="card-val">' + p.age + '</span></div>' +
       '<div class="card-row"><span class="card-key">Type</span><span class="card-val">' + p.mbti + '</span></div>' +
       '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">' + p.id + '</span></div>' +
+      '<div class="card-section">' +
+        '<div class="card-sec-title">Conditions</div>' +
+        condHtml +
+      '</div>' +
     '</div>';
+  const nameEl = profile.querySelector(".card-name");
+  if (nameEl) nameEl.addEventListener("click", () => setSelected(selected));
   parseEmoji(profile);
+}
+
+function statRow(k, v) {
+  return '<div class="stat-row"><span class="stat-key">' + k + '</span><span class="stat-val">' + v + '</span></div>';
+}
+
+function renderStats() {
+  const n = people.length;
+  if (!n) { stats.innerHTML = ""; return; }
+  let male = 0, ageSum = 0, withCond = 0;
+  const flagCount = {}, condCount = {};
+  for (const p of people) {
+    if (p.sex === "Male") male++;
+    ageSum += p.age;
+    if (p.conditions.length) withCond++;
+    for (const f of p.flags) flagCount[f] = (flagCount[f] || 0) + 1;
+    for (const c of p.conditions) condCount[c] = (condCount[c] || 0) + 1;
+  }
+  const pct = (x) => Math.round((x / n) * 100);
+  const flagTotal = Object.values(flagCount).reduce((a, b) => a + b, 0);
+  const topFlags = Object.entries(flagCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topConds = Object.entries(condCount).sort((a, b) => b[1] - a[1]).slice(0, 4);
+
+  let html = "";
+  html += statRow("Population", n);
+  html += statRow("Male", pct(male) + "%");
+  html += statRow("Female", pct(n - male) + "%");
+  html += statRow("Avg age", Math.round(ageSum / n));
+
+  html += '<div class="stat-sub">Top origins</div>';
+  for (const [f, c] of topFlags) {
+    html += '<div class="stat-row"><span class="stat-flag">' + f + " " + (flagNames[f] || "") +
+      '</span><span class="stat-val">' + Math.round((c / flagTotal) * 100) + "%</span></div>";
+  }
+
+  html += '<div class="stat-sub">Conditions</div>';
+  html += statRow("With a condition", pct(withCond) + "%");
+  for (const [c, cnt] of topConds) {
+    html += '<div class="stat-row"><span class="stat-key">' + c + '</span><span class="stat-val">' + pct(cnt) + "%</span></div>";
+  }
+
+  stats.innerHTML = html;
+  parseEmoji(stats);
 }
 
 function generate() {
@@ -290,20 +389,26 @@ function generate() {
       age: randInt(1, 80),
       id: makeId(used),
       mbti: weightedChoice(mbtiTypes, mbtiWeights),
-      flags: flagList
+      flags: flagList,
+      conditions: rollConditions()
     });
   }
   selected = null;
+  searchTerm = "";
+  search.value = "";
   save();
   showSim();
 }
 
 gen.addEventListener("click", generate);
+search.addEventListener("input", () => { searchTerm = search.value; renderList(); });
 reset.addEventListener("click", () => {
   localStorage.removeItem(KEY);
   people = [];
   selected = null;
   value = 10;
+  searchTerm = "";
+  search.value = "";
   showStart();
 });
 
