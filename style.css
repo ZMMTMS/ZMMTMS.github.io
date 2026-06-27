@@ -18,10 +18,16 @@
   --red-hover: #c94a4a;
   --red-border: #6e2222;
 }
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar { display: none; }
+
 html, body {
   margin: 0;
   height: 100%;
+  overflow: hidden;
 }
 body {
   background: var(--bg);
@@ -110,6 +116,9 @@ body {
   height: 100%;
 }
 #listPane { width: 280px; flex: 0 0 280px; }
+#statsPane { width: 280px; flex: 0 0 280px; }
+#profileArea { flex: 1; min-width: 0; }
+
 .pane-head {
   color: var(--text-dim);
   padding: 4px 8px;
@@ -121,18 +130,47 @@ body {
   padding: 4px 6px;
 }
 
-#profileArea { flex: 1; }
+.search {
+  margin: 6px;
+  padding: 3px 6px;
+  background: var(--frame);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.search:focus { border-color: var(--accent); }
+.search::placeholder { color: var(--text-dim); }
 
 .row {
   line-height: 19px;
   padding: 0 2px;
   cursor: pointer;
   border-radius: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .row:hover { background: rgba(255, 255, 255, 0.05); }
 .row.selected { background: rgba(61, 124, 196, 0.35); }
 
 .dim { color: var(--text-dim); }
+
+.placeholder-box {
+  width: 232px;
+  min-height: 110px;
+  background: var(--frame);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  color: var(--text-dim);
+}
 
 .card {
   width: 232px;
@@ -146,7 +184,9 @@ body {
   color: #ffffff;
   padding: 5px 8px;
   font-size: 14px;
+  cursor: pointer;
 }
+.card-name:hover { background: var(--accent-bright); }
 .card-flags {
   padding: 7px 8px;
   line-height: 1;
@@ -167,12 +207,30 @@ body {
 .card-key { color: var(--text-dim); }
 .card-val { color: var(--text); }
 .card-id { color: var(--accent-bright); letter-spacing: 1px; }
-
-.pane-body::-webkit-scrollbar { width: 14px; }
-.pane-body::-webkit-scrollbar-track { background: var(--frame); }
-.pane-body::-webkit-scrollbar-thumb {
-  background: #4a4a52;
-  border: 3px solid var(--frame);
-  border-radius: 7px;
+.card-section {
+  border-top: 1px solid var(--border);
+  padding: 5px 8px 6px;
 }
-.pane-body::-webkit-scrollbar-thumb:hover { background: #5a5a64; }
+.card-sec-title { color: var(--text-dim); margin-bottom: 2px; }
+.cond { line-height: 17px; }
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 8px;
+  line-height: 18px;
+}
+.stat-key { color: var(--text-dim); }
+.stat-val { color: var(--text); }
+.stat-sub {
+  color: var(--text-dim);
+  padding: 7px 8px 3px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+}
+.stat-flag img.emoji {
+  height: 15px;
+  width: 15px;
+  margin-right: 6px;
+  vertical-align: -2px;
+}
