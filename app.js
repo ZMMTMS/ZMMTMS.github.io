@@ -137,47 +137,60 @@ const mbtiTypes = ["ISFJ","ESFJ","ISTJ","ISFP","ESTJ","ESFP","ENFP","ISTP",
 const mbtiWeights = [13.8,12.3,11.6,8.8,8.7,8.5,8.1,5.4,4.4,4.3,3.3,3.2,2.5,2.1,1.8,1.5];
 
 const conditions = [
-  {name:"Anxiety disorder",p:0.12,spectrum:true},
-  {name:"Depression",p:0.08,spectrum:true},
-  {name:"Dyslexia",p:0.07},
-  {name:"Misophonia",p:0.06},
-  {name:"ADHD",p:0.05,spectrum:true},
-  {name:"Dyscalculia",p:0.04},
-  {name:"PTSD",p:0.035,spectrum:true},
-  {name:"Obsessive-compulsive PD",p:0.03},
-  {name:"Aphantasia",p:0.03},
-  {name:"Synesthesia",p:0.03},
-  {name:"Autism spectrum",p:0.025,spectrum:true},
-  {name:"Avoidant PD",p:0.022},
-  {name:"Prosopagnosia",p:0.02},
-  {name:"Paranoid PD",p:0.018},
-  {name:"Bipolar disorder",p:0.015,spectrum:true},
-  {name:"Eating disorder",p:0.015},
-  {name:"Antisocial PD",p:0.015,spectrum:true},
-  {name:"Trichotillomania",p:0.014},
-  {name:"Borderline PD",p:0.014,spectrum:true},
-  {name:"OCD",p:0.012,spectrum:true},
-  {name:"Narcissistic PD",p:0.01,spectrum:true},
-  {name:"Psychopathy",p:0.01,spectrum:true},
-  {name:"Histrionic PD",p:0.009},
-  {name:"Schizoid PD",p:0.009},
-  {name:"Schizotypal PD",p:0.008},
-  {name:"Tourette syndrome",p:0.006},
-  {name:"Schizophrenia",p:0.005,spectrum:true},
-  {name:"Narcolepsy",p:0.0005},
-  {name:"Huntington's disease",p:0.00007},
-  {name:"Capgras delusion",p:0.00002},
-  {name:"Stendhal syndrome",p:0.00001},
-  {name:"Cotard's delusion",p:0.00001},
-  {name:"Alien hand syndrome",p:0.000005},
-  {name:"Foreign accent syndrome",p:0.000002},
-  {name:"Hyperthymesia",p:0.0000005},
-  {name:"Fatal familial insomnia",p:0.0000005}
+  {name:"Anxiety disorder",p:0.12,spectrum:true,desc:"Excessive, persistent worry or fear that interferes with daily life."},
+  {name:"Depression",p:0.08,spectrum:true,desc:"A mood disorder causing persistent sadness and loss of interest."},
+  {name:"Dyslexia",p:0.07,desc:"A learning difference affecting reading and word processing."},
+  {name:"Misophonia",p:0.06,desc:"Strong emotional reactions to specific sounds such as chewing."},
+  {name:"ADHD",p:0.05,spectrum:true,desc:"Attention-deficit/hyperactivity disorder; affects focus and impulse control."},
+  {name:"Dyscalculia",p:0.04,desc:"A learning difference affecting the understanding of numbers and maths."},
+  {name:"PTSD",p:0.035,spectrum:true,desc:"Post-traumatic stress disorder following a traumatic event."},
+  {name:"Obsessive-compulsive PD",p:0.03,desc:"A personality pattern of perfectionism, control and orderliness."},
+  {name:"Aphantasia",p:0.03,desc:"The inability to voluntarily form mental images in the mind."},
+  {name:"Synesthesia",p:0.03,desc:"A blending of senses, e.g. seeing colours when hearing sounds."},
+  {name:"Autism spectrum",p:0.025,spectrum:true,desc:"A developmental difference affecting social interaction and behaviour."},
+  {name:"Avoidant PD",p:0.022,desc:"A pattern of social inhibition and intense fear of rejection."},
+  {name:"Prosopagnosia",p:0.02,desc:"Face blindness; difficulty recognising familiar faces."},
+  {name:"Paranoid PD",p:0.018,desc:"A pattern of pervasive distrust and suspicion of others."},
+  {name:"Bipolar disorder",p:0.015,spectrum:true,desc:"Mood swings between depressive lows and manic highs."},
+  {name:"Eating disorder",p:0.015,desc:"A serious condition involving disturbed eating behaviours."},
+  {name:"Antisocial PD",p:0.015,spectrum:true,desc:"A pattern of disregard for the rights and feelings of others."},
+  {name:"Trichotillomania",p:0.014,desc:"A recurring urge to pull out one's own hair."},
+  {name:"Borderline PD",p:0.014,spectrum:true,desc:"Instability in mood, self-image and relationships."},
+  {name:"OCD",p:0.012,spectrum:true,desc:"Obsessive-compulsive disorder; intrusive thoughts and repetitive rituals."},
+  {name:"Narcissistic PD",p:0.01,spectrum:true,desc:"A pattern of grandiosity, need for admiration and low empathy."},
+  {name:"Psychopathy",p:0.01,spectrum:true,desc:"Traits of low empathy, charm and impulsivity, gauged by the PCL-R scale."},
+  {name:"Histrionic PD",p:0.009,desc:"A pattern of excessive emotionality and attention-seeking."},
+  {name:"Schizoid PD",p:0.009,desc:"Detachment from social relationships and a narrow range of emotion."},
+  {name:"Schizotypal PD",p:0.008,desc:"Eccentric behaviour and acute discomfort with close relationships."},
+  {name:"Tourette syndrome",p:0.006,desc:"A nervous-system condition causing involuntary movements and sounds."},
+  {name:"Schizophrenia",p:0.005,spectrum:true,desc:"A disorder affecting thought, perception and the sense of reality."},
+  {name:"Narcolepsy",p:0.0005,desc:"A sleep disorder causing sudden, uncontrollable bouts of sleep."},
+  {name:"Huntington's disease",p:0.00007,desc:"An inherited disorder causing progressive degeneration of the brain."},
+  {name:"Capgras delusion",p:0.00002,desc:"The belief that a loved one has been replaced by an identical impostor."},
+  {name:"Stendhal syndrome",p:0.00001,desc:"Dizziness and racing heart when viewing intensely beautiful art."},
+  {name:"Cotard's delusion",p:0.00001,desc:"The delusion that one is dead, dying or does not exist."},
+  {name:"Alien hand syndrome",p:0.000005,desc:"A hand that acts on its own without conscious control."},
+  {name:"Foreign accent syndrome",p:0.000002,desc:"Speech that suddenly takes on what sounds like a foreign accent."},
+  {name:"Hyperthymesia",p:0.0000005,desc:"An extraordinarily detailed memory of one's own life."},
+  {name:"Fatal familial insomnia",p:0.0000005,desc:"An ultra-rare inherited disease of progressive, untreatable insomnia."}
 ];
 const condInfo = {};
 for (const c of conditions) condInfo[c.name] = c;
 
-const KEY = "zmmtms_v5";
+const wealthTiers = [
+  {lo:100,hi:50000,w:12,neg:true},
+  {lo:1,hi:10000,w:30},
+  {lo:10000,hi:100000,w:33},
+  {lo:100000,hi:1000000,w:23.8},
+  {lo:1000000,hi:10000000,w:1.0},
+  {lo:10000000,hi:100000000,w:0.15},
+  {lo:100000000,hi:1000000000,w:0.04},
+  {lo:1000000000,hi:100000000000,w:0.01},
+  {lo:100000000000,hi:1000000000000,w:0.0005},
+  {lo:1000000000000,hi:100000000000000,w:0.00005}
+];
+
+const KEY = "zmmtms_v6";
 const MAX = 1000;
 const GRAB_W = 10;
 const TWEMOJI_OPTS = {
@@ -198,15 +211,24 @@ const list = document.getElementById("list");
 const listHead = document.getElementById("listHead");
 const profile = document.getElementById("profileArea");
 const stats = document.getElementById("stats");
+const dashboard = document.getElementById("dashboard");
+const logScreen = document.getElementById("logScreen");
+const logBody = document.getElementById("logBody");
+const tabDash = document.getElementById("tabDash");
+const tabLog = document.getElementById("tabLog");
 
 let value = 10;
 let people = [];
 let selected = null;
 let searchTerm = "";
+let log = [];
+let view = "dashboard";
 
-function randPick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+const tip = document.createElement("div");
+tip.id = "tip";
+document.body.appendChild(tip);
+
+function randPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function weightedChoice(items, weights) {
   let total = 0;
   for (const w of weights) total += w;
@@ -217,9 +239,7 @@ function weightedChoice(items, weights) {
   }
   return items[items.length - 1];
 }
-function randInt(a, b) {
-  return Math.floor(Math.random() * (b - a + 1)) + a;
-}
+function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
 function makeId(used) {
   const chars = "0123456789ABCDEF";
   let id;
@@ -258,14 +278,39 @@ function sevInfo(pct) {
 function rollConditions() {
   const out = [];
   for (const c of conditions) {
-    if (Math.random() < c.p) {
-      out.push({ name: c.name, sev: c.spectrum ? rollSeverity() : null });
-    }
+    if (Math.random() < c.p) out.push({ name: c.name, sev: c.spectrum ? rollSeverity() : null });
   }
   return out;
 }
+function rollMoney() {
+  const t = weightedChoice(wealthTiers, wealthTiers.map((x) => x.w));
+  const lo = Math.log10(t.lo), hi = Math.log10(t.hi);
+  const v = Math.round(Math.pow(10, lo + Math.random() * (hi - lo)));
+  return t.neg ? -v : v;
+}
+function rollHappiness() {
+  return Math.round(((Math.random() + Math.random()) / 2) * 100);
+}
+function formatMoney(v) {
+  const a = Math.abs(v), s = v < 0 ? "-" : "";
+  if (a >= 1e12) return s + "$" + (a / 1e12).toFixed(a >= 1e13 ? 0 : 1) + "T";
+  if (a >= 1e9) return s + "$" + (a / 1e9).toFixed(a >= 1e10 ? 0 : 1) + "B";
+  if (a >= 1e6) return s + "$" + (a / 1e6).toFixed(a >= 1e7 ? 0 : 1) + "M";
+  return s + "$" + Math.round(a).toLocaleString("en-US");
+}
 function parseEmoji(el) {
   if (window.twemoji) twemoji.parse(el, TWEMOJI_OPTS);
+}
+function infoSpan(name) {
+  const d = condInfo[name] ? condInfo[name].desc : "";
+  return '<span class="info" data-desc="' + d + '">i</span>';
+}
+
+function addLog(msg, type) {
+  const t = new Date().toTimeString().slice(0, 8);
+  log.unshift({ t: t, msg: msg, type: type || "info" });
+  if (log.length > 500) log.length = 500;
+  if (view === "log") renderLog();
 }
 
 function renderSlider() {
@@ -289,7 +334,7 @@ window.addEventListener("mousemove", (e) => { if (dragging) updateFromX(e.client
 window.addEventListener("mouseup", () => { dragging = false; });
 
 function save() {
-  localStorage.setItem(KEY, JSON.stringify({ people, selected, value }));
+  localStorage.setItem(KEY, JSON.stringify({ people, selected, value, log, view }));
 }
 function load() {
   try {
@@ -299,6 +344,8 @@ function load() {
     people = data.people || [];
     selected = (data.selected !== undefined) ? data.selected : null;
     value = data.value || 10;
+    log = data.log || [];
+    view = data.view || "dashboard";
     return people.length > 0;
   } catch (e) {
     return false;
@@ -313,9 +360,21 @@ function showStart() {
 function showSim() {
   startView.style.display = "none";
   simView.style.display = "flex";
+  setView(view);
   renderStats();
   renderList();
   renderProfile();
+}
+
+function setView(v) {
+  view = v;
+  const dash = v === "dashboard";
+  dashboard.style.display = dash ? "flex" : "none";
+  logScreen.style.display = dash ? "none" : "flex";
+  tabDash.classList.toggle("active", dash);
+  tabLog.classList.toggle("active", !dash);
+  if (!dash) renderLog();
+  save();
 }
 
 function renderList() {
@@ -359,8 +418,10 @@ function setSelected(id) {
 }
 
 function killPerson(id) {
-  people = people.filter((p) => p.id !== id);
+  const p = people.find((x) => x.id === id);
+  people = people.filter((x) => x.id !== id);
   if (selected === id) selected = null;
+  if (p) addLog(p.name + " was killed.", "kill");
   save();
   renderStats();
   renderList();
@@ -375,18 +436,16 @@ function renderProfile() {
   }
   const condHtml = p.conditions.length
     ? p.conditions.map((c) => {
-        if (c.sev == null) {
-          return '<div class="cond"><div class="cond-name">' + c.name + '</div></div>';
-        }
+        const nameLine = '<div class="cond-name"><span>' + c.name + '</span>' + infoSpan(c.name) + '</div>';
+        if (c.sev == null) return '<div class="cond">' + nameLine + '</div>';
         const info = sevInfo(c.sev);
-        return '<div class="cond">' +
-          '<div class="cond-name">' + c.name + '</div>' +
+        return '<div class="cond">' + nameLine +
           '<div class="cond-bar"><div class="cond-fill ' + info.cls + '" style="width:' + c.sev + '%"></div></div>' +
-          '<div class="cond-meta">' + info.label + ' &middot; ' + c.sev + '%</div>' +
-        '</div>';
+          '<div class="cond-meta">' + info.label + ' &middot; ' + c.sev + '%</div></div>';
       }).join("")
     : '<div class="cond dim">None</div>';
 
+  const moneyCls = p.money < 0 ? "money-neg" : "money-pos";
   profile.innerHTML =
     '<div class="card">' +
       '<div class="card-name">' +
@@ -396,6 +455,8 @@ function renderProfile() {
       '<div class="card-fixed">' +
         '<div class="card-row"><span class="card-key">Sex</span><span class="card-val">' + p.sex + '</span></div>' +
         '<div class="card-row"><span class="card-key">Age</span><span class="card-val">' + p.age + '</span></div>' +
+        '<div class="card-row"><span class="card-key">Money</span><span class="card-val ' + moneyCls + '">' + formatMoney(p.money) + '</span></div>' +
+        '<div class="card-row"><span class="card-key">Happiness</span><span class="card-val">' + p.happiness + '</span></div>' +
         '<div class="card-row"><span class="card-key">Type</span><span class="card-val">' + p.mbti + '</span></div>' +
         '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">' + p.id + '</span></div>' +
       '</div>' +
@@ -411,15 +472,26 @@ function renderProfile() {
 function statRow(k, v) {
   return '<div class="stat-row"><span class="stat-key">' + k + '</span><span class="stat-val">' + v + '</span></div>';
 }
+function stat2(k1, v1, k2, v2) {
+  let h = '<div class="stat-row2"><span class="s2"><span class="stat-key">' + k1 + '</span><span class="stat-val">' + v1 + '</span></span>';
+  if (k2 !== "") h += '<span class="s2"><span class="stat-key">' + k2 + '</span><span class="stat-val">' + v2 + '</span></span>';
+  return h + '</div>';
+}
 
 function renderStats() {
   const n = people.length;
   if (!n) { stats.innerHTML = ""; return; }
-  let male = 0, ageSum = 0, withCond = 0, totalConds = 0;
+  let male = 0, ageSum = 0, happySum = 0, withCond = 0, totalConds = 0;
+  let mil = 0, bil = 0, tril = 0, debt = 0;
   const flagCount = {}, condCount = {}, condSevSum = {};
   for (const p of people) {
     if (p.sex === "Male") male++;
     ageSum += p.age;
+    happySum += p.happiness;
+    if (p.money >= 1e12) tril++;
+    else if (p.money >= 1e9) bil++;
+    else if (p.money >= 1e6) mil++;
+    if (p.money < 0) debt++;
     if (p.conditions.length) withCond++;
     for (const f of p.flags) flagCount[f] = (flagCount[f] || 0) + 1;
     for (const c of p.conditions) {
@@ -430,14 +502,18 @@ function renderStats() {
   }
   const pct = (x) => Math.round((x / n) * 100);
   const flagTotal = Object.values(flagCount).reduce((a, b) => a + b, 0);
-  const topFlags = Object.entries(flagCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
-  const condList = Object.entries(condCount).sort((a, b) => b[1] - a[1]);
+  const topFlags = Object.entries(flagCount).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const condList = conditions
+    .map((c) => ({ name: c.name, cnt: condCount[c.name] || 0, p: c.p, spectrum: c.spectrum }))
+    .sort((a, b) => b.cnt - a.cnt || b.p - a.p);
 
   let html = "";
-  html += statRow("Population", n);
-  html += statRow("Male", pct(male) + "%");
-  html += statRow("Female", pct(n - male) + "%");
-  html += statRow("Avg age", Math.round(ageSum / n));
+  html += stat2("Population", n, "Avg. age", Math.round(ageSum / n));
+  html += stat2("Male", pct(male) + "%", "Female", pct(n - male) + "%");
+  html += stat2("Avg. happy", Math.round(happySum / n), "In debt", pct(debt) + "%");
+  html += stat2("Millionaires", mil, "Billionaires", bil);
+  html += stat2("Trillionaires", tril, "&ge;1 condition", pct(withCond) + "%");
+  html += statRow("Avg. conditions", (totalConds / n).toFixed(2));
 
   html += '<div class="stat-sub">Top origins</div>';
   for (const [f, c] of topFlags) {
@@ -446,18 +522,23 @@ function renderStats() {
   }
 
   html += '<div class="stat-sub">Conditions</div>';
-  html += statRow("With a condition", pct(withCond) + "%");
-  html += statRow("Avg per person", (totalConds / n).toFixed(2));
-  for (const [name, cnt] of condList) {
-    html += '<div class="stat-row"><span class="stat-key">' + name +
-      '</span><span class="stat-val">' + pct(cnt) + '% <span class="stat-dim">(' + cnt + ')</span></span></div>';
-    if (condInfo[name] && condInfo[name].spectrum) {
-      html += '<div class="stat-note">avg severity ' + Math.round(condSevSum[name] / cnt) + '%</div>';
+  for (const c of condList) {
+    html += '<div class="stat-row"><span class="stat-key">' + c.name + ' ' + infoSpan(c.name) +
+      '</span><span class="stat-val">' + pct(c.cnt) + '% <span class="stat-dim">(' + c.cnt + ')</span></span></div>';
+    if (c.spectrum && c.cnt > 0) {
+      html += '<div class="stat-note">Avg. severity ' + Math.round(condSevSum[c.name] / c.cnt) + '%</div>';
     }
   }
 
   stats.innerHTML = html;
   parseEmoji(stats);
+}
+
+function renderLog() {
+  if (!log.length) { logBody.innerHTML = '<div class="dim">No events yet.</div>'; return; }
+  logBody.innerHTML = log.map((e) =>
+    '<div class="log-line log-' + e.type + '"><span class="log-time">' + e.t + '</span>' + e.msg + '</div>'
+  ).join("");
 }
 
 function generate() {
@@ -471,6 +552,8 @@ function generate() {
       name: makeName(flagList[0], sex),
       sex: sex,
       age: randInt(1, 80),
+      money: rollMoney(),
+      happiness: rollHappiness(),
       mbti: weightedChoice(mbtiTypes, mbtiWeights),
       flags: flagList,
       conditions: rollConditions()
@@ -479,12 +562,16 @@ function generate() {
   selected = null;
   searchTerm = "";
   search.value = "";
+  log = [];
+  addLog("Spawned " + value + " people.", "spawn");
   save();
   showSim();
 }
 
 gen.addEventListener("click", generate);
 search.addEventListener("input", () => { searchTerm = search.value; renderList(); });
+tabDash.addEventListener("click", () => setView("dashboard"));
+tabLog.addEventListener("click", () => setView("log"));
 reset.addEventListener("click", () => {
   localStorage.removeItem(KEY);
   people = [];
@@ -492,8 +579,36 @@ reset.addEventListener("click", () => {
   value = 10;
   searchTerm = "";
   search.value = "";
+  log = [];
+  view = "dashboard";
   showStart();
 });
+
+document.addEventListener("mouseover", (e) => {
+  const el = e.target.closest ? e.target.closest(".info") : null;
+  if (el && el.dataset.desc) showTip(el.dataset.desc, e.clientX, e.clientY);
+});
+document.addEventListener("mousemove", (e) => {
+  if (tip.style.display !== "block") return;
+  const el = e.target.closest ? e.target.closest(".info") : null;
+  if (el && el.dataset.desc) showTip(el.dataset.desc, e.clientX, e.clientY);
+  else hideTip();
+});
+document.addEventListener("mouseout", (e) => {
+  if (e.target.closest && e.target.closest(".info")) hideTip();
+});
+function showTip(text, x, y) {
+  tip.textContent = text;
+  tip.style.display = "block";
+  const pad = 14;
+  const r = tip.getBoundingClientRect();
+  let tx = x + pad, ty = y + pad;
+  if (tx + r.width > window.innerWidth - 6) tx = x - r.width - pad;
+  if (ty + r.height > window.innerHeight - 6) ty = y - r.height - pad;
+  tip.style.left = Math.max(6, tx) + "px";
+  tip.style.top = Math.max(6, ty) + "px";
+}
+function hideTip() { tip.style.display = "none"; }
 
 if (load()) {
   showSim();
