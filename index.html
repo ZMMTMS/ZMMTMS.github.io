@@ -18,16 +18,31 @@
 </div>
 
 <div id="simView">
-  <button class="reset" id="reset">Reset</button>
-  <div class="pane" id="listPane">
-    <div class="pane-head" id="listHead">People</div>
-    <input class="search" id="search" type="text" placeholder="Search names...">
-    <div class="pane-body" id="list"></div>
+  <div class="toolbar">
+    <button class="tab active" id="tabDash">Dashboard</button>
+    <button class="tab" id="tabLog">Log</button>
+    <span class="toolbar-spacer"></span>
+    <button class="reset" id="reset">Reset</button>
   </div>
-  <div id="profileArea"></div>
-  <div class="pane" id="statsPane">
-    <div class="pane-head">Statistics</div>
-    <div class="pane-body" id="stats"></div>
+
+  <div id="dashboard">
+    <div class="pane" id="listPane">
+      <div class="pane-head" id="listHead">People</div>
+      <input class="search" id="search" type="text" placeholder="Search names...">
+      <div class="pane-body" id="list"></div>
+    </div>
+    <div id="profileArea"></div>
+    <div class="pane" id="statsPane">
+      <div class="pane-head">Statistics</div>
+      <div class="pane-body" id="stats"></div>
+    </div>
+  </div>
+
+  <div id="logScreen">
+    <div class="pane" id="logPane">
+      <div class="pane-head">Event log</div>
+      <div class="pane-body" id="logBody"></div>
+    </div>
   </div>
 </div>
 
