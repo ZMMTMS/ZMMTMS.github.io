@@ -179,19 +179,19 @@ for (const c of conditions) condInfo[c.name] = c;
 
 const wealthTiers = [
   {lo:100,hi:50000,w:12,neg:true},
-  {lo:1,hi:10000,w:30},
+  {lo:1,hi:10000,w:34},
   {lo:10000,hi:100000,w:33},
-  {lo:100000,hi:1000000,w:23.8},
-  {lo:1000000,hi:10000000,w:1.0},
-  {lo:10000000,hi:100000000,w:0.15},
-  {lo:100000000,hi:1000000000,w:0.04},
-  {lo:1000000000,hi:100000000000,w:0.01},
-  {lo:100000000000,hi:1000000000000,w:0.0005},
-  {lo:1000000000000,hi:100000000000000,w:0.00005}
+  {lo:100000,hi:1000000,w:19.4},
+  {lo:1000000,hi:10000000,w:1.5},
+  {lo:10000000,hi:100000000,w:0.08},
+  {lo:100000000,hi:1000000000,w:0.004},
+  {lo:1000000000,hi:100000000000,w:0.0004},
+  {lo:100000000000,hi:1000000000000,w:0.000004},
+  {lo:1000000000000,hi:100000000000000,w:0.0000004}
 ];
 
 const KEY = "zmmtms_v6";
-const MAX = 1000;
+const MAX = 10000;
 const GRAB_W = 10;
 const TWEMOJI_OPTS = {
   base: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@master/assets/",
@@ -223,6 +223,8 @@ let selected = null;
 let searchTerm = "";
 let log = [];
 let view = "dashboard";
+let sortKey = "name";
+let sortDir = 1;
 
 const tip = document.createElement("div");
 tip.id = "tip";
@@ -334,7 +336,7 @@ window.addEventListener("mousemove", (e) => { if (dragging) updateFromX(e.client
 window.addEventListener("mouseup", () => { dragging = false; });
 
 function save() {
-  localStorage.setItem(KEY, JSON.stringify({ people, selected, value, log, view }));
+  localStorage.setItem(KEY, JSON.stringify({ people, selected, value, log, view, sortKey, sortDir }));
 }
 function load() {
   try {
@@ -346,6 +348,8 @@ function load() {
     value = data.value || 10;
     log = data.log || [];
     view = data.view || "dashboard";
+    sortKey = data.sortKey || "name";
+    sortDir = data.sortDir || 1;
     return people.length > 0;
   } catch (e) {
     return false;
@@ -361,6 +365,7 @@ function showSim() {
   startView.style.display = "none";
   simView.style.display = "flex";
   setView(view);
+  renderSortBar();
   renderStats();
   renderList();
   renderProfile();
@@ -377,13 +382,41 @@ function setView(v) {
   save();
 }
 
+function sortCompare(a, b) {
+  let d;
+  if (sortKey === "name") d = a.name.localeCompare(b.name);
+  else d = (a[sortKey] || 0) - (b[sortKey] || 0);
+  return d * sortDir;
+}
+
+function setSort(key) {
+  if (sortKey === key) sortDir = -sortDir;
+  else { sortKey = key; sortDir = (key === "name") ? 1 : -1; }
+  save();
+  renderSortBar();
+  renderList();
+}
+
+function renderSortBar() {
+  document.querySelectorAll(".sortbtn").forEach((b) => {
+    const base = b.dataset.label;
+    if (b.dataset.key === sortKey) {
+      b.classList.add("active");
+      b.textContent = base + (sortDir === 1 ? " ▲" : " ▼");
+    } else {
+      b.classList.remove("active");
+      b.textContent = base;
+    }
+  });
+}
+
 function renderList() {
   const term = searchTerm.toLowerCase();
-  let shown = 0;
+  const arr = (term ? people.filter((p) => p.name.toLowerCase().includes(term)) : people.slice());
+  arr.sort(sortCompare);
   list.innerHTML = "";
-  people.forEach((p) => {
-    if (term && !p.name.toLowerCase().includes(term)) return;
-    shown++;
+  const frag = document.createDocumentFragment();
+  arr.forEach((p) => {
     const row = document.createElement("div");
     row.className = "row" + (p.id === selected ? " selected" : "");
     row.dataset.id = p.id;
@@ -401,10 +434,11 @@ function renderList() {
     row.appendChild(name);
     row.appendChild(kill);
     row.addEventListener("click", () => setSelected(p.id));
-    list.appendChild(row);
+    frag.appendChild(row);
   });
+  list.appendChild(frag);
   listHead.textContent = term
-    ? "People (" + shown + "/" + people.length + ")"
+    ? "People (" + arr.length + "/" + people.length + ")"
     : "People (" + people.length + ")";
 }
 
@@ -483,7 +517,7 @@ function renderStats() {
   if (!n) { stats.innerHTML = ""; return; }
   let male = 0, ageSum = 0, happySum = 0, withCond = 0, totalConds = 0;
   let mil = 0, bil = 0, tril = 0, debt = 0;
-  const flagCount = {}, condCount = {}, condSevSum = {};
+  const flagCount = {}, condCount = {};
   for (const p of people) {
     if (p.sex === "Male") male++;
     ageSum += p.age;
@@ -497,7 +531,6 @@ function renderStats() {
     for (const c of p.conditions) {
       condCount[c.name] = (condCount[c.name] || 0) + 1;
       totalConds++;
-      if (c.sev != null) condSevSum[c.name] = (condSevSum[c.name] || 0) + c.sev;
     }
   }
   const pct = (x) => Math.round((x / n) * 100);
@@ -525,9 +558,6 @@ function renderStats() {
   for (const c of condList) {
     html += '<div class="stat-row"><span class="stat-key">' + c.name + ' ' + infoSpan(c.name) +
       '</span><span class="stat-val">' + pct(c.cnt) + '% <span class="stat-dim">(' + c.cnt + ')</span></span></div>';
-    if (c.spectrum && c.cnt > 0) {
-      html += '<div class="stat-note">Avg. severity ' + Math.round(condSevSum[c.name] / c.cnt) + '%</div>';
-    }
   }
 
   stats.innerHTML = html;
@@ -572,6 +602,9 @@ gen.addEventListener("click", generate);
 search.addEventListener("input", () => { searchTerm = search.value; renderList(); });
 tabDash.addEventListener("click", () => setView("dashboard"));
 tabLog.addEventListener("click", () => setView("log"));
+document.querySelectorAll(".sortbtn").forEach((b) => {
+  b.addEventListener("click", () => setSort(b.dataset.key));
+});
 reset.addEventListener("click", () => {
   localStorage.removeItem(KEY);
   people = [];
@@ -581,6 +614,8 @@ reset.addEventListener("click", () => {
   search.value = "";
   log = [];
   view = "dashboard";
+  sortKey = "name";
+  sortDir = 1;
   showStart();
 });
 
