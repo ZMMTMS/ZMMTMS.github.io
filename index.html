@@ -3,179 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulator</title>
-<style>
-@font-face {
-  font-family: 'ProggyClean';
-  src: url('ProggyClean.ttf');
-}
-:root {
-  --bg: #242427;
-  --frame: #18181b;
-  --panel: #1f1f22;
-  --border: #3a3a42;
-  --text: #dadada;
-  --text-dim: #8a8a8a;
-  --btn: #34343b;
-  --btn-hover: #3e3e47;
-  --btn-active: #2c2c33;
-  --accent: #3d7cc4;
-  --accent-bright: #4a8fd6;
-}
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  height: 100%;
-}
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'ProggyClean', 'Consolas', 'Courier New', monospace;
-  font-size: 13px;
-  -webkit-font-smoothing: none;
-}
-.app {
-  height: 100vh;
-  padding: 8px;
-}
-.label {
-  margin-bottom: 4px;
-}
-.slider {
-  position: relative;
-  width: 300px;
-  height: 20px;
-  background: var(--frame);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 6px;
-}
-.grab {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  width: 10px;
-  height: 14px;
-  background: var(--accent);
-  border-radius: 2px;
-}
-.slider:active .grab { background: var(--accent-bright); }
-.val {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-.btn {
-  font-family: inherit;
-  font-size: 13px;
-  color: var(--text);
-  background: var(--btn);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 3px 9px;
-  cursor: pointer;
-}
-.btn:hover { background: var(--btn-hover); }
-.btn:active { background: var(--btn-active); }
-.sep {
-  height: 1px;
-  background: var(--border);
-  margin: 7px 0;
-}
-.list {
-  height: 400px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 4px 6px;
-  overflow-y: auto;
-}
-.row { line-height: 18px; }
-.list::-webkit-scrollbar { width: 14px; }
-.list::-webkit-scrollbar-track { background: var(--frame); }
-.list::-webkit-scrollbar-thumb {
-  background: #4a4a52;
-  border: 3px solid var(--frame);
-  border-radius: 7px;
-}
-.list::-webkit-scrollbar-thumb:hover { background: #5a5a64; }
-</style>
+<title>ZMMTMS</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
+<div id="startView">
   <div class="label">How many people?</div>
   <div class="slider" id="slider">
     <div class="grab" id="grab"></div>
     <div class="val" id="val">10</div>
   </div>
   <button class="btn" id="gen">Generate</button>
-  <div class="sep"></div>
-  <div class="list" id="list"></div>
 </div>
-<script>
-const firstNames = ["Sheza","Baasti","Learka","Trogla","Glesti","Murra",
-  "Oltan","Vendi","Korin","Aelfa","Druss","Tamsa","Brenn","Olua","Senna",
-  "Gorra","Hessa","Pell"];
-const lastNames = ["heth","lleryn","moora","vesh","rook","thorne","dun",
-  "skar","mell","wyn","grith","vale"];
 
-const slider = document.getElementById("slider");
-const grab = document.getElementById("grab");
-const val = document.getElementById("val");
-const gen = document.getElementById("gen");
-const list = document.getElementById("list");
+<div id="simView">
+  <button class="reset" id="reset">Reset</button>
+  <div class="pane" id="listPane">
+    <div class="pane-head" id="listHead">People</div>
+    <div class="pane-body" id="list"></div>
+  </div>
+  <div class="pane" id="profilePane">
+    <div class="pane-head">Profile</div>
+    <div class="pane-body" id="profile"></div>
+  </div>
+</div>
 
-const GRAB_W = 10;
-let value = 10;
-let people = [];
-
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
-
-function render() {
-  const width = slider.clientWidth;
-  const frac = (value - 1) / 99;
-  grab.style.left = (frac * (width - GRAB_W)) + "px";
-  val.textContent = value;
-}
-
-function updateFromX(clientX) {
-  const r = slider.getBoundingClientRect();
-  const width = slider.clientWidth;
-  let frac = (clientX - r.left - 1 - GRAB_W / 2) / (width - GRAB_W);
-  frac = Math.max(0, Math.min(1, frac));
-  value = Math.round(1 + frac * 99);
-  render();
-}
-
-let dragging = false;
-slider.addEventListener("mousedown", (e) => { dragging = true; updateFromX(e.clientX); });
-window.addEventListener("mousemove", (e) => { if (dragging) updateFromX(e.clientX); });
-window.addEventListener("mouseup", () => { dragging = false; });
-
-function generate() {
-  people = [];
-  for (let i = 0; i < value; i++) {
-    people.push({ name: pick(firstNames) + pick(lastNames), age: randInt(1, 80) });
-  }
-  list.innerHTML = "";
-  for (const p of people) {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.textContent = p.name + ", " + p.age;
-    list.appendChild(row);
-  }
-}
-
-gen.addEventListener("click", generate);
-
-render();
-generate();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
