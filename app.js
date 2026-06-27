@@ -1,48 +1,105 @@
-const maleNames = [
-  "James","Robert","John","Michael","David","William","Richard","Joseph",
-  "Thomas","Charles","Christopher","Daniel","Matthew","Anthony","Mark","Donald",
-  "Steven","Paul","Andrew","Joshua","Kenneth","Kevin","Brian","George",
-  "Timothy","Ronald","Edward","Jason","Jeffrey","Ryan","Jacob","Gary",
-  "Nicholas","Eric","Jonathan","Stephen","Larry","Justin","Scott","Brandon",
-  "Benjamin","Samuel","Gregory","Alexander","Patrick","Frank","Raymond","Jack",
-  "Dennis","Jerry","Tyler","Aaron","Jose","Henry","Adam","Nathan",
-  "Zachary","Kyle","Noah","Ethan","Jeremy","Christian","Sean","Austin",
-  "Gabriel","Logan","Juan","Elijah","Dylan","Bryan","Jordan","Carl",
-  "Vincent","Russell","Bobby","Johnny"
-];
-
-const femaleNames = [
-  "Mary","Patricia","Jennifer","Linda","Elizabeth","Barbara","Susan","Jessica",
-  "Sarah","Karen","Lisa","Nancy","Betty","Margaret","Sandra","Ashley",
-  "Kimberly","Emily","Donna","Michelle","Carol","Amanda","Dorothy","Melissa",
-  "Deborah","Stephanie","Rebecca","Sharon","Laura","Cynthia","Kathleen","Amy",
-  "Angela","Shirley","Anna","Brenda","Pamela","Emma","Nicole","Helen",
-  "Samantha","Katherine","Christine","Rachel","Carolyn","Janet","Maria","Heather",
-  "Diane","Olivia","Julie","Joyce","Victoria","Kelly","Lauren","Christina",
-  "Joan","Evelyn","Judith","Megan","Andrea","Hannah","Jacqueline","Martha",
-  "Gloria","Teresa","Ann","Sara","Madison","Frances","Grace","Abigail",
-  "Sophia","Charlotte","Marie","Isabella"
-];
-
-const lastNames = [
-  "Smith","Johnson","Williams","Brown","Jones","Garcia","Miller","Davis",
-  "Rodriguez","Martinez","Hernandez","Lopez","Gonzalez","Wilson","Anderson","Thomas",
-  "Taylor","Moore","Jackson","Martin","Lee","Perez","Thompson","White",
-  "Harris","Sanchez","Clark","Ramirez","Lewis","Robinson","Walker","Young",
-  "Allen","King","Wright","Scott","Torres","Nguyen","Hill","Flores",
-  "Green","Adams","Nelson","Baker","Hall","Rivera","Campbell","Mitchell",
-  "Carter","Roberts","Gomez","Phillips","Evans","Turner","Diaz","Parker",
-  "Cruz","Edwards","Collins","Reyes","Stewart","Morris","Morales","Murphy",
-  "Cook","Rogers","Gutierrez","Ortiz","Morgan","Cooper","Peterson","Bailey",
-  "Reed","Kelly","Howard","Ramos","Kim","Cox","Ward","Richardson",
-  "Watson","Brooks","Chavez","Wood","James","Bennett","Gray","Mendoza",
-  "Ruiz","Hughes","Price","Alvarez","Castillo","Sanders","Patel","Myers",
-  "Long","Ross","Foster","Jimenez"
-];
-
-const mbtiTypes = ["ISFJ","ESFJ","ISTJ","ISFP","ESTJ","ESFP","ENFP","ISTP",
-  "INFP","ESTP","INTP","ENTP","ENFJ","INTJ","ENTJ","INFJ"];
-const mbtiWeights = [13.8,12.3,11.6,8.8,8.7,8.5,8.1,5.4,4.4,4.3,3.3,3.2,2.5,2.1,1.8,1.5];
+const nameSets = {
+  western: {
+    m: ["James","John","Michael","David","William","Robert","Daniel","Matthew","Andrew","Ryan"],
+    f: ["Mary","Jennifer","Linda","Elizabeth","Susan","Sarah","Jessica","Emily","Emma","Olivia"],
+    last: ["Smith","Johnson","Williams","Brown","Jones","Miller","Davis","Wilson","Taylor","Anderson"]
+  },
+  hispanic: {
+    m: ["José","Juan","Luis","Carlos","Miguel","Jorge","Manuel","Diego","Javier","Antonio"],
+    f: ["María","Carmen","Ana","Isabel","Sofía","Lucía","Laura","Elena","Daniela","Valentina"],
+    last: ["García","Martínez","López","González","Rodríguez","Pérez","Sánchez","Ramírez","Torres","Flores"]
+  },
+  arabic: {
+    m: ["Mohammed","Ahmed","Ali","Omar","Hassan","Ibrahim","Yusuf","Khalid","Mahmoud","Tariq"],
+    f: ["Fatima","Aisha","Maryam","Layla","Zainab","Noor","Amira","Yasmin","Salma","Khadija"],
+    last: ["Al-Sayed","Hassan","Ahmed","Mansour","Saleh","Aziz","Haddad","Nasser","Khan","Farouk"]
+  },
+  chinese: {
+    m: ["Wei","Jun","Hao","Lei","Ming","Tao","Peng","Yong","Gang","Feng"],
+    f: ["Fang","Min","Jing","Yan","Na","Hong","Ying","Xia","Mei","Juan"],
+    last: ["Wang","Li","Zhang","Liu","Chen","Yang","Huang","Zhao","Wu","Zhou"]
+  },
+  indian: {
+    m: ["Aarav","Arjun","Rohan","Aditya","Rahul","Vikram","Amit","Karan","Suresh","Raj"],
+    f: ["Aanya","Priya","Anjali","Neha","Pooja","Divya","Kavya","Meera","Sunita","Lakshmi"],
+    last: ["Sharma","Patel","Singh","Kumar","Gupta","Reddy","Nair","Rao","Das","Mehta"]
+  },
+  japanese: {
+    m: ["Haruto","Yuto","Sota","Hayato","Riku","Ren","Daiki","Kenta","Takashi","Hiroshi"],
+    f: ["Yui","Aoi","Hana","Sakura","Yuna","Mio","Rin","Akari","Hina","Keiko"],
+    last: ["Sato","Suzuki","Takahashi","Tanaka","Watanabe","Ito","Yamamoto","Nakamura","Kobayashi","Kato"]
+  },
+  korean: {
+    m: ["Min-jun","Seo-jun","Do-yun","Ji-ho","Joon","Hyun","Seung","Jin","Sung-min","Tae-yang"],
+    f: ["Seo-yeon","Ji-woo","Min-seo","Ha-eun","Soo-jin","Hye-jin","Eun-ji","Yu-na","Ji-eun","Bo-ram"],
+    last: ["Kim","Lee","Park","Choi","Jung","Kang","Cho","Yoon","Jang","Lim"]
+  },
+  vietnamese: {
+    m: ["Anh","Minh","Hoang","Tuan","Duc","Nam","Khanh","Long","Hung","Quang"],
+    f: ["Linh","Huong","Lan","Mai","Thuy","Ngoc","Hanh","Trang","Phuong","Thao"],
+    last: ["Nguyen","Tran","Le","Pham","Hoang","Phan","Vu","Dang","Bui","Do"]
+  },
+  thai: {
+    m: ["Somchai","Anan","Niran","Decha","Krit","Arthit","Prasit","Chai","Wirat","Surasak"],
+    f: ["Siri","Malee","Achara","Kanya","Lawan","Pranee","Sukanya","Wanida","Ratana","Nong"],
+    last: ["Saengthong","Wongsawat","Chankaew","Phongsiri","Srisuk","Boonmee","Rattanakorn","Thongchai","Sutthiwong","Kittisak"]
+  },
+  indonesian: {
+    m: ["Budi","Agus","Andi","Joko","Bambang","Eko","Rizki","Putra","Wahyu","Dwi"],
+    f: ["Siti","Dewi","Sri","Putri","Ayu","Indah","Wulan","Rina","Fitri","Maya"],
+    last: ["Wijaya","Susanto","Hidayat","Saputra","Pratama","Nugroho","Santoso","Halim","Gunawan","Kurniawan"]
+  },
+  russian: {
+    m: ["Alexander","Dmitri","Ivan","Sergei","Andrei","Mikhail","Nikolai","Vladimir","Pavel","Maxim"],
+    f: ["Olga","Elena","Natalia","Irina","Tatiana","Svetlana","Ekaterina","Yulia","Anastasia","Nadia"],
+    last: ["Ivanov","Smirnov","Kuznetsov","Popov","Volkov","Petrov","Sokolov","Novikov","Morozov","Pavlov"]
+  },
+  polish: {
+    m: ["Jakub","Jan","Piotr","Krzysztof","Andrzej","Tomasz","Paweł","Michał","Marcin","Łukasz"],
+    f: ["Anna","Maria","Katarzyna","Małgorzata","Agnieszka","Magdalena","Joanna","Ewa","Zofia","Julia"],
+    last: ["Nowak","Kowalski","Wiśniewski","Wójcik","Kowalczyk","Kamiński","Lewandowski","Zieliński","Szymański","Woźniak"]
+  },
+  german: {
+    m: ["Lukas","Felix","Maximilian","Paul","Leon","Jonas","Finn","Elias","Hans","Klaus"],
+    f: ["Marie","Sophie","Maria","Emma","Hannah","Mia","Anna","Lena","Laura","Sabine"],
+    last: ["Müller","Schmidt","Schneider","Fischer","Weber","Meyer","Wagner","Becker","Schulz","Hoffmann"]
+  },
+  french: {
+    m: ["Lucas","Louis","Hugo","Jules","Nathan","Léo","Gabriel","Arthur","Antoine","Pierre"],
+    f: ["Emma","Léa","Chloé","Manon","Camille","Sarah","Marie","Julie","Lucie","Inès"],
+    last: ["Martin","Bernard","Dubois","Thomas","Robert","Petit","Durand","Leroy","Moreau","Lefebvre"]
+  },
+  italian: {
+    m: ["Francesco","Alessandro","Lorenzo","Matteo","Andrea","Gabriele","Marco","Giuseppe","Antonio","Luca"],
+    f: ["Sofia","Giulia","Aurora","Alice","Martina","Chiara","Sara","Francesca","Elena","Giorgia"],
+    last: ["Rossi","Russo","Ferrari","Esposito","Bianchi","Romano","Colombo","Ricci","Marino","Greco"]
+  },
+  persian: {
+    m: ["Ali","Reza","Hossein","Amir","Mohammad","Mehdi","Saeed","Farhad","Babak","Arash"],
+    f: ["Fatemeh","Zahra","Maryam","Sara","Niloufar","Shirin","Leila","Nasrin","Parisa","Mahsa"],
+    last: ["Hosseini","Mohammadi","Ahmadi","Rezaei","Karimi","Tehrani","Jafari","Moradi","Sadeghi","Bagheri"]
+  },
+  turkish: {
+    m: ["Mehmet","Mustafa","Ahmet","Ali","Hasan","Emre","Murat","Yusuf","Burak","Kerem"],
+    f: ["Fatma","Ayşe","Emine","Zeynep","Elif","Merve","Esra","Selin","Derya","Ece"],
+    last: ["Yılmaz","Kaya","Demir","Şahin","Çelik","Yıldız","Yıldırım","Öztürk","Aydın","Arslan"]
+  },
+  nigerian: {
+    m: ["Chinedu","Emeka","Oluwaseun","Tunde","Ifeanyi","Babatunde","Obi","Adebayo","Yusuf","Musa"],
+    f: ["Ngozi","Chioma","Amara","Folake","Funmilayo","Adaeze","Ifeoma","Blessing","Zainab","Aisha"],
+    last: ["Okafor","Adeyemi","Okonkwo","Abubakar","Eze","Balogun","Obi","Adebayo","Nwosu","Okeke"]
+  },
+  africanEast: {
+    m: ["Abebe","Dawit","Tesfaye","Kamau","Mwangi","Otieno","Juma","Solomon","Bekele","Omondi"],
+    f: ["Tigist","Meron","Selam","Wanjiku","Akinyi","Njeri","Aster","Hanna","Amani","Zawadi"],
+    last: ["Tesfaye","Bekele","Kamau","Mwangi","Otieno","Abebe","Getachew","Wanjala","Kiprop","Mutua"]
+  },
+  brazilian: {
+    m: ["João","Pedro","Lucas","Gabriel","Matheus","Rafael","Felipe","Bruno","Gustavo","Thiago"],
+    f: ["Maria","Ana","Beatriz","Juliana","Camila","Larissa","Fernanda","Mariana","Gabriela","Bruna"],
+    last: ["Silva","Santos","Oliveira","Souza","Lima","Pereira","Ferreira","Costa","Rodrigues","Almeida"]
+  }
+};
 
 const flags = ["🇨🇳","🇮🇳","🇺🇸","🇮🇩","🇵🇰","🇳🇬","🇧🇷","🇧🇩","🇷🇺","🇲🇽",
   "🇯🇵","🇪🇹","🇵🇭","🇪🇬","🇻🇳","🇨🇩","🇮🇷","🇹🇷","🇩🇪","🇹🇭",
@@ -53,8 +110,28 @@ const flagWeights = [1410,1430,335,277,240,223,216,173,144,128,
   68,68,60,59,55,52,52,48,46,37,
   45,48,47,45,42,38,39,37,37,26];
 
-const KEY = "zmmtms_v2";
+const flagToSet = {
+  "🇨🇳":"chinese","🇮🇳":"indian","🇺🇸":"western","🇮🇩":"indonesian","🇵🇰":"arabic",
+  "🇳🇬":"nigerian","🇧🇷":"brazilian","🇧🇩":"arabic","🇷🇺":"russian","🇲🇽":"hispanic",
+  "🇯🇵":"japanese","🇪🇹":"africanEast","🇵🇭":"hispanic","🇪🇬":"arabic","🇻🇳":"vietnamese",
+  "🇨🇩":"french","🇮🇷":"persian","🇹🇷":"turkish","🇩🇪":"german","🇹🇭":"thai",
+  "🇬🇧":"western","🇫🇷":"french","🇿🇦":"western","🇮🇹":"italian","🇰🇪":"africanEast",
+  "🇰🇷":"korean","🇨🇴":"hispanic","🇪🇸":"hispanic","🇦🇷":"hispanic","🇺🇦":"russian",
+  "🇩🇿":"arabic","🇸🇩":"arabic","🇺🇬":"africanEast","🇮🇶":"arabic","🇦🇫":"persian",
+  "🇵🇱":"polish","🇨🇦":"western","🇲🇦":"arabic","🇸🇦":"arabic","🇦🇺":"western"
+};
+
+const mbtiTypes = ["ISFJ","ESFJ","ISTJ","ISFP","ESTJ","ESFP","ENFP","ISTP",
+  "INFP","ESTP","INTP","ENTP","ENFJ","INTJ","ENTJ","INFJ"];
+const mbtiWeights = [13.8,12.3,11.6,8.8,8.7,8.5,8.1,5.4,4.4,4.3,3.3,3.2,2.5,2.1,1.8,1.5];
+
+const KEY = "zmmtms_v3";
 const GRAB_W = 10;
+const TWEMOJI_OPTS = {
+  base: "https://cdn.jsdelivr.net/gh/jdecked/twemoji@master/assets/",
+  folder: "svg",
+  ext: ".svg"
+};
 
 const startView = document.getElementById("startView");
 const simView = document.getElementById("simView");
@@ -65,14 +142,14 @@ const gen = document.getElementById("gen");
 const reset = document.getElementById("reset");
 const list = document.getElementById("list");
 const listHead = document.getElementById("listHead");
-const profile = document.getElementById("profile");
+const profile = document.getElementById("profileArea");
 
 let value = 10;
 let people = [];
 let selected = null;
 
-function weightedPick(arr) {
-  return arr[Math.floor(Math.pow(Math.random(), 2) * arr.length)];
+function randPick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 function weightedChoice(items, weights) {
   let total = 0;
@@ -107,6 +184,14 @@ function pickFlags() {
     guard++;
   }
   return chosen;
+}
+function makeName(primaryFlag, sex) {
+  const set = nameSets[flagToSet[primaryFlag]] || nameSets.western;
+  const first = sex === "Male" ? randPick(set.m) : randPick(set.f);
+  return first + " " + randPick(set.last);
+}
+function parseEmoji(el) {
+  if (window.twemoji) twemoji.parse(el, TWEMOJI_OPTS);
 }
 
 function renderSlider() {
@@ -177,7 +262,7 @@ function renderList() {
 
 function renderProfile() {
   if (selected === null || !people[selected]) {
-    profile.innerHTML = '<div class="dim">Select a person to view their profile.</div>';
+    profile.innerHTML = '<div class="dim">Select a person to view their card.</div>';
     return;
   }
   const p = people[selected];
@@ -190,6 +275,7 @@ function renderProfile() {
       '<div class="card-row"><span class="card-key">Type</span><span class="card-val">' + p.mbti + '</span></div>' +
       '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">' + p.id + '</span></div>' +
     '</div>';
+  parseEmoji(profile);
 }
 
 function generate() {
@@ -197,14 +283,14 @@ function generate() {
   people = [];
   for (let i = 0; i < value; i++) {
     const sex = Math.random() < 0.5 ? "Male" : "Female";
-    const first = sex === "Male" ? weightedPick(maleNames) : weightedPick(femaleNames);
+    const flagList = pickFlags();
     people.push({
-      name: first + " " + weightedPick(lastNames),
+      name: makeName(flagList[0], sex),
       sex: sex,
       age: randInt(1, 80),
       id: makeId(used),
       mbti: weightedChoice(mbtiTypes, mbtiWeights),
-      flags: pickFlags()
+      flags: flagList
     });
   }
   selected = null;
