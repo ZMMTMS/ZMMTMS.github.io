@@ -60,6 +60,13 @@ body {
   margin-bottom: 8px;
 }
 .toolbar-spacer { flex: 1; }
+.brand {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-right: 8px;
+}
 .tab {
   font-family: inherit;
   font-size: 13px;
@@ -171,6 +178,22 @@ body {
 }
 .search:focus { border-color: var(--accent); }
 .search::placeholder { color: var(--text-dim); }
+
+.sortbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0 6px 4px; }
+.sort-label { color: var(--text-dim); margin-right: 2px; }
+.sortbtn {
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--btn);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 7px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sortbtn:hover { background: var(--btn-hover); }
+.sortbtn.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
 
 .row {
   display: flex;
