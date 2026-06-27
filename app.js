@@ -1,23 +1,27 @@
-const firstNames = [
-  "James","Mary","Robert","Patricia","John","Jennifer","Michael","Linda",
-  "David","Elizabeth","William","Barbara","Richard","Susan","Joseph","Jessica",
-  "Thomas","Sarah","Charles","Karen","Christopher","Lisa","Daniel","Nancy",
-  "Matthew","Betty","Anthony","Margaret","Mark","Sandra","Donald","Ashley",
-  "Steven","Kimberly","Paul","Emily","Andrew","Donna","Joshua","Michelle",
-  "Kenneth","Carol","Kevin","Amanda","Brian","Dorothy","George","Melissa",
-  "Timothy","Deborah","Ronald","Stephanie","Edward","Rebecca","Jason","Sharon",
-  "Jeffrey","Laura","Ryan","Cynthia","Jacob","Kathleen","Gary","Amy",
-  "Nicholas","Angela","Eric","Shirley","Jonathan","Anna","Stephen","Brenda",
-  "Larry","Pamela","Justin","Emma","Scott","Nicole","Brandon","Helen",
-  "Benjamin","Samantha","Samuel","Katherine","Gregory","Christine","Alexander","Rachel",
-  "Patrick","Carolyn","Frank","Janet","Raymond","Maria","Jack","Heather",
-  "Dennis","Diane","Jerry","Olivia","Tyler","Julie","Aaron","Joyce",
-  "Jose","Victoria","Henry","Kelly","Adam","Lauren","Nathan","Christina",
-  "Zachary","Joan","Kyle","Evelyn","Noah","Judith","Ethan","Megan",
-  "Jeremy","Andrea","Christian","Hannah","Sean","Jacqueline","Austin","Martha",
-  "Gabriel","Gloria","Logan","Teresa","Juan","Ann","Elijah","Sara",
-  "Dylan","Madison","Bryan","Frances","Jordan","Grace","Carl","Abigail",
-  "Vincent","Sophia","Russell","Charlotte","Bobby","Marie","Johnny","Isabella"
+const maleNames = [
+  "James","Robert","John","Michael","David","William","Richard","Joseph",
+  "Thomas","Charles","Christopher","Daniel","Matthew","Anthony","Mark","Donald",
+  "Steven","Paul","Andrew","Joshua","Kenneth","Kevin","Brian","George",
+  "Timothy","Ronald","Edward","Jason","Jeffrey","Ryan","Jacob","Gary",
+  "Nicholas","Eric","Jonathan","Stephen","Larry","Justin","Scott","Brandon",
+  "Benjamin","Samuel","Gregory","Alexander","Patrick","Frank","Raymond","Jack",
+  "Dennis","Jerry","Tyler","Aaron","Jose","Henry","Adam","Nathan",
+  "Zachary","Kyle","Noah","Ethan","Jeremy","Christian","Sean","Austin",
+  "Gabriel","Logan","Juan","Elijah","Dylan","Bryan","Jordan","Carl",
+  "Vincent","Russell","Bobby","Johnny"
+];
+
+const femaleNames = [
+  "Mary","Patricia","Jennifer","Linda","Elizabeth","Barbara","Susan","Jessica",
+  "Sarah","Karen","Lisa","Nancy","Betty","Margaret","Sandra","Ashley",
+  "Kimberly","Emily","Donna","Michelle","Carol","Amanda","Dorothy","Melissa",
+  "Deborah","Stephanie","Rebecca","Sharon","Laura","Cynthia","Kathleen","Amy",
+  "Angela","Shirley","Anna","Brenda","Pamela","Emma","Nicole","Helen",
+  "Samantha","Katherine","Christine","Rachel","Carolyn","Janet","Maria","Heather",
+  "Diane","Olivia","Julie","Joyce","Victoria","Kelly","Lauren","Christina",
+  "Joan","Evelyn","Judith","Megan","Andrea","Hannah","Jacqueline","Martha",
+  "Gloria","Teresa","Ann","Sara","Madison","Frances","Grace","Abigail",
+  "Sophia","Charlotte","Marie","Isabella"
 ];
 
 const lastNames = [
@@ -36,7 +40,20 @@ const lastNames = [
   "Long","Ross","Foster","Jimenez"
 ];
 
-const KEY = "zmmtms_sim";
+const mbtiTypes = ["ISFJ","ESFJ","ISTJ","ISFP","ESTJ","ESFP","ENFP","ISTP",
+  "INFP","ESTP","INTP","ENTP","ENFJ","INTJ","ENTJ","INFJ"];
+const mbtiWeights = [13.8,12.3,11.6,8.8,8.7,8.5,8.1,5.4,4.4,4.3,3.3,3.2,2.5,2.1,1.8,1.5];
+
+const flags = ["🇨🇳","🇮🇳","🇺🇸","🇮🇩","🇵🇰","🇳🇬","🇧🇷","🇧🇩","🇷🇺","🇲🇽",
+  "🇯🇵","🇪🇹","🇵🇭","🇪🇬","🇻🇳","🇨🇩","🇮🇷","🇹🇷","🇩🇪","🇹🇭",
+  "🇬🇧","🇫🇷","🇿🇦","🇮🇹","🇰🇪","🇰🇷","🇨🇴","🇪🇸","🇦🇷","🇺🇦",
+  "🇩🇿","🇸🇩","🇺🇬","🇮🇶","🇦🇫","🇵🇱","🇨🇦","🇲🇦","🇸🇦","🇦🇺"];
+const flagWeights = [1410,1430,335,277,240,223,216,173,144,128,
+  123,127,117,112,98,102,89,85,84,72,
+  68,68,60,59,55,52,52,48,46,37,
+  45,48,47,45,42,38,39,37,37,26];
+
+const KEY = "zmmtms_v2";
 const GRAB_W = 10;
 
 const startView = document.getElementById("startView");
@@ -57,6 +74,16 @@ let selected = null;
 function weightedPick(arr) {
   return arr[Math.floor(Math.pow(Math.random(), 2) * arr.length)];
 }
+function weightedChoice(items, weights) {
+  let total = 0;
+  for (const w of weights) total += w;
+  let r = Math.random() * total;
+  for (let i = 0; i < items.length; i++) {
+    r -= weights[i];
+    if (r < 0) return items[i];
+  }
+  return items[items.length - 1];
+}
 function randInt(a, b) {
   return Math.floor(Math.random() * (b - a + 1)) + a;
 }
@@ -69,6 +96,17 @@ function makeId(used) {
   } while (used.has(id));
   used.add(id);
   return id;
+}
+function pickFlags() {
+  const count = weightedChoice([1, 2, 3], [70, 24, 6]);
+  const chosen = [];
+  let guard = 0;
+  while (chosen.length < count && guard < 50) {
+    const f = weightedChoice(flags, flagWeights);
+    if (!chosen.includes(f)) chosen.push(f);
+    guard++;
+  }
+  return chosen;
 }
 
 function renderSlider() {
@@ -144,19 +182,29 @@ function renderProfile() {
   }
   const p = people[selected];
   profile.innerHTML =
-    '<div class="pf-row"><span class="pf-key">Name</span><span class="pf-val">' + p.name + '</span></div>' +
-    '<div class="pf-row"><span class="pf-key">Age</span><span class="pf-val">' + p.age + '</span></div>' +
-    '<div class="pf-row"><span class="pf-key">ID</span><span class="pf-val pf-id">' + p.id + '</span></div>';
+    '<div class="card">' +
+      '<div class="card-name">' + p.name + '</div>' +
+      '<div class="card-flags">' + p.flags.join(" ") + '</div>' +
+      '<div class="card-row"><span class="card-key">Sex</span><span class="card-val">' + p.sex + '</span></div>' +
+      '<div class="card-row"><span class="card-key">Age</span><span class="card-val">' + p.age + '</span></div>' +
+      '<div class="card-row"><span class="card-key">Type</span><span class="card-val">' + p.mbti + '</span></div>' +
+      '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">' + p.id + '</span></div>' +
+    '</div>';
 }
 
 function generate() {
   const used = new Set();
   people = [];
   for (let i = 0; i < value; i++) {
+    const sex = Math.random() < 0.5 ? "Male" : "Female";
+    const first = sex === "Male" ? weightedPick(maleNames) : weightedPick(femaleNames);
     people.push({
-      name: weightedPick(firstNames) + " " + weightedPick(lastNames),
+      name: first + " " + weightedPick(lastNames),
+      sex: sex,
       age: randInt(1, 80),
-      id: makeId(used)
+      id: makeId(used),
+      mbti: weightedChoice(mbtiTypes, mbtiWeights),
+      flags: pickFlags()
     });
   }
   selected = null;
