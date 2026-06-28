@@ -85,7 +85,7 @@ const jobTiers = [
 ];
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const SPEEDS = [{label:"1×",ms:1000},{label:"2×",ms:500},{label:"5×",ms:200}];
+const SPEEDS = [{label:"1×",ms:1000},{label:"2×",ms:500},{label:"5×",ms:200},{label:"10×",ms:100},{label:"20×",ms:50}];
 
 const KEY = "zmmtms_v8";
 const MAX = 10000;
@@ -123,6 +123,7 @@ const wbDeaths = document.getElementById("wbDeaths");
 const playBtn = document.getElementById("playBtn");
 const stepBtn = document.getElementById("stepBtn");
 const speedBtn = document.getElementById("speedBtn");
+const speedSel = document.getElementById("speedSel");
 
 let value = 10;
 let fertility = 1.5;
@@ -229,6 +230,7 @@ function computeTemp(m){ return Math.round(11+11*Math.sin((m-3)/12*2*Math.PI)+(M
 // ---- sliders ----
 function renderSlider(){ const w=slider.clientWidth; const frac=(value-1)/(MAX-1); grab.style.left=(frac*(w-GRAB_W))+"px"; val.textContent=value; }
 function renderFert(){ const w=fertSlider.clientWidth; const frac=(fertility-FERT_MIN)/(FERT_MAX-FERT_MIN); fertGrab.style.left=(frac*(w-GRAB_W))+"px"; fertVal.textContent=fertility.toFixed(1); }
+function renderSpeedSel(){ document.querySelectorAll(".speedopt").forEach(b=>b.classList.toggle("active",(+b.dataset.i)===speedIdx)); }
 let dragA=false, dragB=false;
 slider.addEventListener("mousedown",e=>{dragA=true;setSliderX(e.clientX);});
 fertSlider.addEventListener("mousedown",e=>{dragB=true;setFertX(e.clientX);});
@@ -237,10 +239,10 @@ window.addEventListener("mouseup",()=>{dragA=false;dragB=false;});
 function setSliderX(x){ const r=slider.getBoundingClientRect(); const w=slider.clientWidth; let f=clamp((x-r.left-1-GRAB_W/2)/(w-GRAB_W),0,1); value=Math.round(1+f*(MAX-1)); renderSlider(); }
 function setFertX(x){ const r=fertSlider.getBoundingClientRect(); const w=fertSlider.clientWidth; let f=clamp((x-r.left-1-GRAB_W/2)/(w-GRAB_W),0,1); fertility=Math.round((FERT_MIN+f*(FERT_MAX-FERT_MIN))*10)/10; renderFert(); }
 
-function save(){ try{ localStorage.setItem(KEY,JSON.stringify({people,selected,value,fertility,log,view,sortKey,sortDir,tickCount,totalBirths,totalDeaths,temperature})); }catch(e){} }
-function load(){ try{ const raw=localStorage.getItem(KEY); if(!raw)return false; const d=JSON.parse(raw); people=d.people||[]; selected=d.selected!==undefined?d.selected:null; value=d.value||10; fertility=d.fertility||1.5; log=d.log||[]; view=d.view||"dashboard"; sortKey=d.sortKey||"name"; sortDir=d.sortDir||1; tickCount=d.tickCount||0; totalBirths=d.totalBirths||0; totalDeaths=d.totalDeaths||0; temperature=d.temperature||0; return people.length>0; }catch(e){ return false; } }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify({people,selected,value,fertility,speedIdx,log,view,sortKey,sortDir,tickCount,totalBirths,totalDeaths,temperature})); }catch(e){} }
+function load(){ try{ const raw=localStorage.getItem(KEY); if(!raw)return false; const d=JSON.parse(raw); people=d.people||[]; selected=d.selected!==undefined?d.selected:null; value=d.value||10; fertility=d.fertility||1.5; speedIdx=d.speedIdx||0; log=d.log||[]; view=d.view||"dashboard"; sortKey=d.sortKey||"name"; sortDir=d.sortDir||1; tickCount=d.tickCount||0; totalBirths=d.totalBirths||0; totalDeaths=d.totalDeaths||0; temperature=d.temperature||0; return people.length>0; }catch(e){ return false; } }
 
-function showStart(){ pause(); simView.style.display="none"; startView.style.display="block"; renderSlider(); renderFert(); }
+function showStart(){ pause(); simView.style.display="none"; startView.style.display="block"; renderSlider(); renderFert(); renderSpeedSel(); }
 function showSim(){ startView.style.display="none"; simView.style.display="flex"; setView(view); }
 
 function setView(v){
@@ -299,6 +301,8 @@ function relName(map,id){ const r=map.get(id); return r?('<span class="rel-link"
 function renderProfile(){
   const p=people.find(x=>x.id===selected);
   if(!p){ cardSlot.innerHTML='<div class="placeholder-box">Click a profile to open it</div>'; return; }
+  const oldBody=cardSlot.querySelector(".card-body");
+  const keepScroll=oldBody?oldBody.scrollTop:0;
   const map=new Map(people.map(x=>[x.id,x]));
   const condHtml=p.conditions.length?p.conditions.map(c=>{
     const nl='<div class="cond-name"><span>'+c.name+'</span>'+infoSpan(c.name)+'</div>';
@@ -317,16 +321,13 @@ function renderProfile(){
     '<div class="card">'+
       '<div class="card-name"><span class="card-name-text">'+p.name+'</span><span class="card-name-flags">'+p.flags.join(" ")+'</span></div>'+
       '<div class="card-body">'+
-        '<div class="card-row"><span class="card-key">Sex</span><span class="card-val">'+p.sex+'</span></div>'+
-        '<div class="card-row"><span class="card-key">Age</span><span class="card-val">'+p.age+'</span></div>'+
+        '<div class="card-row2"><span class="c2"><span class="card-key">Sex</span><span class="card-val">'+p.sex+'</span></span><span class="c2"><span class="card-key">Age</span><span class="card-val">'+p.age+'</span></span></div>'+
+        '<div class="card-row2"><span class="c2"><span class="card-key">IQ</span><span class="card-val">'+p.iq+'</span></span><span class="c2"><span class="card-key">Type</span><span class="card-val">'+p.mbti+'</span></span></div>'+
+        '<div class="card-row2"><span class="c2"><span class="card-key">Gen</span><span class="card-val">'+p.gen+'</span></span><span class="c2"><span class="card-key">Happy</span><span class="card-val '+happyClass(p.happiness)+'">'+p.happiness+'</span></span></div>'+
         '<div class="card-row"><span class="card-key">Orientation</span><span class="card-val">'+p.orientation+'</span></div>'+
-        '<div class="card-row"><span class="card-key">Generation</span><span class="card-val">'+p.gen+'</span></div>'+
         '<div class="card-row"><span class="card-key">Job</span><span class="card-val">'+p.job+'</span></div>'+
         '<div class="card-row"><span class="card-key">Salary</span><span class="card-val">'+salaryTxt+'</span></div>'+
         '<div class="card-row"><span class="card-key">Net worth</span><span class="card-val '+moneyCls+'">'+formatMoney(p.money)+'</span></div>'+
-        '<div class="card-row"><span class="card-key">Happiness</span><span class="card-val '+happyClass(p.happiness)+'">'+p.happiness+'</span></div>'+
-        '<div class="card-row"><span class="card-key">IQ</span><span class="card-val">'+p.iq+'</span></div>'+
-        '<div class="card-row"><span class="card-key">Type</span><span class="card-val">'+p.mbti+'</span></div>'+
         '<div class="card-row"><span class="card-key">ID</span><span class="card-val card-id">'+p.id+'</span></div>'+
         '<div class="card-sub">Relationships</div>'+
         '<div class="card-row"><span class="card-key">Status</span><span class="card-val">'+statusOf(p)+'</span></div>'+
@@ -341,6 +342,8 @@ function renderProfile(){
   const nameEl=cardSlot.querySelector(".card-name");
   if(nameEl) nameEl.addEventListener("click",()=>setSelected(selected));
   cardSlot.querySelectorAll(".rel-link").forEach(el=>{ el.addEventListener("click",()=>setSelected(el.dataset.id)); });
+  const newBody=cardSlot.querySelector(".card-body");
+  if(newBody) newBody.scrollTop=keepScroll;
   parseEmoji(cardSlot);
 }
 
@@ -464,6 +467,7 @@ function stepTick(){
     const annual=Math.min(0.95,6.7e-5*Math.exp(0.085*p.age));
     const monthly=1-Math.pow(1-annual,1/12);
     if(Math.random()<monthly){ dead.push(p); continue; }
+    if(p.age>=13 && p.happiness<8 && Math.random()<(8-p.happiness)/8*0.02){ p.bySuicide=true; dead.push(p); continue; }
     p.happiness=clamp(p.happiness+Math.round((Math.random()-0.5)*4),0,100);
     p.money+=monthlyMoneyChange(p);
     updateJob(p);
@@ -474,7 +478,8 @@ function stepTick(){
     const map=new Map(people.map(p=>[p.id,p]));
     for(const p of dead){
       totalDeaths++;
-      addLog(p.name+" died at age "+p.age+".","death");
+      if(p.bySuicide){ p.bySuicide=false; addLog(p.name+" died by suicide at age "+p.age+".","death"); }
+      else addLog(p.name+" died at age "+p.age+".","death");
       if(p.partner){ const q=map.get(p.partner); if(q&&!dead.includes(q)){ q.partner=null; q.married=false; q.happiness=clamp(q.happiness-25,0,100); } }
       if(selected===p.id) selected=null;
     }
@@ -580,7 +585,8 @@ tabLog.addEventListener("click",()=>setView("log"));
 document.querySelectorAll(".sortbtn").forEach(b=>b.addEventListener("click",()=>setSort(b.dataset.key)));
 playBtn.addEventListener("click",()=>{ playing?pause():play(); });
 stepBtn.addEventListener("click",()=>{ if(playing)pause(); stepTick(); save(); });
-speedBtn.addEventListener("click",()=>{ speedIdx=(speedIdx+1)%SPEEDS.length; if(playing){ clearInterval(intervalId); intervalId=setInterval(stepTick,SPEEDS[speedIdx].ms); } renderWorld(); });
+speedBtn.addEventListener("click",()=>{ speedIdx=(speedIdx+1)%SPEEDS.length; renderSpeedSel(); if(playing){ clearInterval(intervalId); intervalId=setInterval(stepTick,SPEEDS[speedIdx].ms); } renderWorld(); save(); });
+document.querySelectorAll(".speedopt").forEach(b=>b.addEventListener("click",()=>{ speedIdx=+b.dataset.i; renderSpeedSel(); if(playing){ clearInterval(intervalId); intervalId=setInterval(stepTick,SPEEDS[speedIdx].ms); } renderWorld(); save(); }));
 reset.addEventListener("click",()=>{ pause(); localStorage.removeItem(KEY); people=[]; selected=null; value=10; fertility=1.5; searchTerm=""; search.value=""; log=[]; view="dashboard"; sortKey="name"; sortDir=1; tickCount=0; totalBirths=0; totalDeaths=0; showStart(); });
 
 document.addEventListener("mouseover",e=>{ const el=e.target.closest?e.target.closest(".info"):null; if(el&&el.dataset.desc) showTip(el.dataset.desc,e.clientX,e.clientY); });
