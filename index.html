@@ -14,6 +14,11 @@
     <div class="grab" id="grab"></div>
     <div class="val" id="val">10</div>
   </div>
+  <div class="label">Births per death</div>
+  <div class="slider" id="fertSlider">
+    <div class="grab" id="fertGrab"></div>
+    <div class="val" id="fertVal">1.5</div>
+  </div>
   <button class="btn" id="gen">Generate</button>
 </div>
 
@@ -39,7 +44,25 @@
       </div>
       <div class="pane-body" id="list"></div>
     </div>
-    <div id="profileArea"></div>
+
+    <div id="profileArea">
+      <div id="cardSlot"></div>
+      <div class="worldbox" id="worldBox">
+        <div class="wb-head">World</div>
+        <div class="wb-time" id="wbTime">Year 0 &middot; January</div>
+        <div class="wb-row"><span class="wb-key">Season</span><span class="wb-val" id="wbSeason">—</span></div>
+        <div class="wb-row"><span class="wb-key">Temp</span><span class="wb-val" id="wbTemp">—</span></div>
+        <div class="wb-row"><span class="wb-key">Population</span><span class="wb-val" id="wbPop">0</span></div>
+        <div class="wb-row"><span class="wb-key">Births</span><span class="wb-val" id="wbBirths">0</span></div>
+        <div class="wb-row"><span class="wb-key">Deaths</span><span class="wb-val" id="wbDeaths">0</span></div>
+        <div class="wb-controls">
+          <button class="wb-btn" id="playBtn">▶ Play</button>
+          <button class="wb-btn" id="stepBtn">Step</button>
+          <button class="wb-btn" id="speedBtn">1×</button>
+        </div>
+      </div>
+    </div>
+
     <div class="pane" id="statsPane">
       <div class="pane-head">Statistics</div>
       <div class="pane-body" id="stats"></div>
